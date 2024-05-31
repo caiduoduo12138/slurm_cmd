@@ -121,8 +121,7 @@ def srun_cmd(*args):
         output = p.stdout.readline().decode('utf-8')
         if output == '' and p.poll() is not None:
             if ('-h' in args) or ('--help' in args):
-                output = output + "  -U,  --user                specify the user to submit a job\n"
-                print(output)
+                print("  -U,  --user                specify the user to submit a job")
             break
 
         if output:
