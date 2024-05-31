@@ -11,17 +11,21 @@ def parase_cmd_args(command: str):
                  }
 
     command_list = command.replace('=', ' ').split(' ')
-    for ind, part in enumerate(command_list):
-        if part in ['-P', '--partition']:
-            json_data['partition'] = command_list[ind+1]
-            continue
+    try:
+        for ind, part in enumerate(command_list):
+            if part in ['-P', '--partition']:
+                json_data['partition'] = command_list[ind+1]
+                continue
 
-        if part in ['-N', '--nodes']:
-            json_data['nodes'] = command_list[ind + 1]
-            continue
+            if part in ['-N', '--nodes']:
+                json_data['nodes'] = command_list[ind + 1]
+                continue
 
-        if part in ['-J', '--job-name']:
-            json_data['job_name'] = command_list[ind + 1]
+            if part in ['-J', '--job-name']:
+                json_data['job_name'] = command_list[ind + 1]
+
+    except:
+        pass
 
     return json_data
 

@@ -7,15 +7,16 @@ body = {
     "name": ""
 }
 
-
-# if_user = bool(requests.post(url, json=body).content)
+# tmp = requests.post(url, json=body).content
+# if_user = str(requests.post(url, json=body).content, 'utf-8')
+# if_user = True if str(requests.post(url, json=body).content, 'utf-8') == "True" else False
 # print(if_user)
 
 
 def login():
     user_name = input("enter the username to login: ")
     body['name'] = user_name
-    if_user = bool(requests.post(url, json=body).content)
+    if_user = True if str(requests.post(url, json=body).content, 'utf-8') == "True" else False
 
     if if_user:
         try:
@@ -33,7 +34,7 @@ def login():
             return False
 
     else:
-        print("ERROR: password error, failed to login!")
+        print("ERROR: username error, failed to login!")
         return False
 
 

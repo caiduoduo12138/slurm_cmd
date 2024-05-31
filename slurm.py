@@ -4,7 +4,7 @@ import requests
 from utils import check_login, parase_cmd_args, get_index
 
 
-url = ""
+url = "http://192.168.100.109:9999/api/slurmJob/syncSlurmJob"
 
 
 @check_login
@@ -89,8 +89,10 @@ def sbatch_cmd(*args):
     else:
         out_string = tmp.stderr
         json_data['state'] = False
-    out_string = out_string.replace('sbatch', 'vbatch') \
-                 + "  -U,  --user                specify the user to submit a job\n"
+    out_string = out_string.replace('sbatch', 'vbatch')
+
+    if ('-h' in args) or ('--help' in args):
+        out_string = out_string + "  -U,  --user                specify the user to submit a job\n"
     print(out_string)
 
     return out_string
@@ -110,21 +112,34 @@ def srun_cmd(*args):
 
     for arg in args[1:]:
         command = command + " " + arg
-    tmp = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
+
+    p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     json_data = parase_cmd_args(command)
     json_data['user'] = username
+    only_once = True
+    while True:
+        output = p.stdout.readline().decode('utf-8')
+        if output == '' and p.poll() is not None:
+            if ('-h' in args) or ('--help' in args):
+                output = output + "  -U,  --user                specify the user to submit a job\n"
+                print(output)
+            break
+
+        if output:
+            print(output.strip().replace('srun', 'vrun'))
+            if only_once:
+                json_data['state'] = True
+                _ = requests.post(url, json=json_data)
+                only_once = False
+
+    err = p.stderr.read().decode('utf-8')
+    if err:
+        json_data['state'] = False
+        print(f"Error: {err.strip().replace('srun', 'vrun')}")
 
     _ = requests.post(url, json=json_data)
 
-    if len(tmp.stdout) > 0:
-        out_string = tmp.stdout
-        json_data['state'] = True
-    else:
-        out_string = tmp.stderr
-        json_data['state'] = False
-    out_string = out_string.replace('srun', 'vrun') + "  -U,  --user                specify the user to submit a job\n"
-    print(out_string)
-    return out_string
+    return None
 
 
 @check_login
@@ -155,6 +170,8 @@ def salloc_cmd(*args):
         json_data['state'] = False
 
     out_string = out_string.replace('salloc', 'valloc')
+    if ('-h' in args) or ('--help' in args):
+        out_string = out_string + "  -U,  --user                specify the user to submit a job\n"
     print(out_string)
     return out_string
 
@@ -213,3 +230,15 @@ if __name__ == "__main__":
                  "cmd": "cmd"
                  }
     _ = requests.post('http://192.168.100.109:9999/api/slurmJob/syncSlurmJob', json=json_data)
+    p = subprocess.Popen("nvidia-smi", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stderr = p.stderr.read().decode('utf-8')
+    if stderr:
+        print(f"Error: {stderr.strip()}")
+    else:
+        while True:
+            output = p.stdout.readline().decode('utf-8')
+            if output == '' and p.poll() is not None:
+                break
+            if output:
+                print(output.strip())
+
