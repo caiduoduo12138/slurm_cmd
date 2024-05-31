@@ -1,10 +1,21 @@
 import os
+import requests
+
+
+url = "http://192.168.100.109:9999/api/users/sysUserQuota/getSlurmUser"
+body = {
+    "name": ""
+}
+
+
+# if_user = bool(requests.post(url, json=body).content)
+# print(if_user)
 
 
 def login():
     user_name = input("enter the username to login: ")
-    # login & get passwd
-    if_user = True
+    body['name'] = user_name
+    if_user = bool(requests.post(url, json=body).content)
 
     if if_user:
         try:
