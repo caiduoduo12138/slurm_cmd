@@ -1,6 +1,10 @@
 import os
 import subprocess
+import requests
 from utils import check_login, parase_cmd_args, get_index
+
+
+url = ""
 
 
 @check_login
@@ -77,7 +81,7 @@ def sbatch_cmd(*args):
     json_data = parase_cmd_args(command)
     json_data['user'] = username
 
-    # request the interface
+    _ = requests.post(url, json=json_data)
 
     if len(tmp.stdout) > 0:
         out_string = tmp.stdout
@@ -110,6 +114,8 @@ def srun_cmd(*args):
     json_data = parase_cmd_args(command)
     json_data['user'] = username
 
+    _ = requests.post(url, json=json_data)
+
     if len(tmp.stdout) > 0:
         out_string = tmp.stdout
         json_data['state'] = True
@@ -138,6 +144,8 @@ def salloc_cmd(*args):
     tmp = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
     json_data = parase_cmd_args(command)
     json_data['user'] = username
+
+    _ = requests.post(url, json=json_data)
 
     if len(tmp.stdout) > 0:
         out_string = tmp.stdout
@@ -187,7 +195,7 @@ def sacct_cmd(*args):
     return out_string
 
 
-def check_version(self):
+def check_version():
     tmp = subprocess.run("slurm --version", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
     if len(tmp.stderr) > 0:
         return -1
@@ -197,3 +205,11 @@ def check_version(self):
 
 if __name__ == "__main__":
     check_version()
+    json_data = {"state": False,
+                 "partition": None,
+                 "nodes": None,
+                 "user": None,
+                 "job_name": None,
+                 "cmd": "cmd"
+                 }
+    _ = requests.post('http://192.168.100.109:9999/api/slurmJob/syncSlurmJob', json=json_data)

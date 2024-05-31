@@ -3,6 +3,7 @@ import subprocess
 from fastapi import FastAPI
 from pydantic import BaseModel
 
+
 app = FastAPI()
 
 
@@ -25,4 +26,4 @@ def cli_api(json_body: JsonBody):
 
 
 if __name__ == "__main__":
-    uvicorn.run("interface:app", host="0.0.0.0", port=7777)
+    uvicorn.run("cli_api:app", host="0.0.0.0", port=7777)
