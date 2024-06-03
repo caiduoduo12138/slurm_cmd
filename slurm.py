@@ -81,7 +81,10 @@ def sbatch_cmd(*args):
     json_data = parase_cmd_args(command)
     json_data['user'] = username
 
-    _ = requests.post(url, json=json_data)
+    try:
+        _ = requests.post(url, json=json_data)
+    except:
+        print("request the {} failed!".format(url))
 
     if len(tmp.stdout) > 0:
         out_string = tmp.stdout
@@ -128,7 +131,10 @@ def srun_cmd(*args):
             print(output.strip().replace('srun', 'vrun'))
             if only_once:
                 json_data['state'] = True
-                _ = requests.post(url, json=json_data)
+                try:
+                    _ = requests.post(url, json=json_data)
+                except:
+                    print("request the {} failed!".format(url))
                 only_once = False
 
     err = p.stderr.read().decode('utf-8')
@@ -136,7 +142,10 @@ def srun_cmd(*args):
         json_data['state'] = False
         print(f"Error: {err.strip().replace('srun', 'vrun')}")
 
-    _ = requests.post(url, json=json_data)
+    try:
+        _ = requests.post(url, json=json_data)
+    except:
+        print("request the {} failed!".format(url))
 
     return None
 
@@ -159,7 +168,10 @@ def salloc_cmd(*args):
     json_data = parase_cmd_args(command)
     json_data['user'] = username
 
-    _ = requests.post(url, json=json_data)
+    try:
+        _ = requests.post(url, json=json_data)
+    except:
+        print("request the {} failed!".format(url))
 
     if len(tmp.stdout) > 0:
         out_string = tmp.stdout

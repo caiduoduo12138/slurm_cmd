@@ -16,7 +16,11 @@ body = {
 def login():
     user_name = input("enter the username to login: ")
     body['name'] = user_name
-    if_user = True if str(requests.post(url, json=body).content, 'utf-8') == "True" else False
+    try:
+        if_user = True if str(requests.post(url, json=body).content, 'utf-8') == "True" else False
+    except:
+        if_user = False
+        print("request the {} failed!".format(url))
 
     if if_user:
         try:
