@@ -158,7 +158,7 @@ def srun_cmd(*args):
     try:
         _ = requests.post(url, json=json_data)
     except:
-        print("request the {} failed!".format(url))
+        print("Warning: request the {} failed!".format(url))
 
     return None
 
