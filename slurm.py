@@ -81,22 +81,25 @@ def sbatch_cmd(*args):
     json_data = parase_cmd_args(command)
     json_data['user'] = username
 
+    if len(tmp.stdout) > 0:
+        out_string = tmp.stdout
+        if "Submitted batch job" in out_string:
+            json_data['state'] = True
+            json_data['job_id'] = out_string.split(' ')[-1]
+
+    else:
+        out_string = tmp.stderr
+
+    out_string = out_string.replace('sbatch', 'vbatch')
+
+    if ('-h' in args) or ('--help' in args):
+        out_string = out_string + "  -U,  --user                 specify the user to submit a job\n"
+    print(out_string)
+
     try:
         _ = requests.post(url, json=json_data)
     except:
         print("request the {} failed!".format(url))
-
-    if len(tmp.stdout) > 0:
-        out_string = tmp.stdout
-        json_data['state'] = True
-    else:
-        out_string = tmp.stderr
-        json_data['state'] = False
-    out_string = out_string.replace('sbatch', 'vbatch')
-
-    if ('-h' in args) or ('--help' in args):
-        out_string = out_string + "  -U,  --user                specify the user to submit a job\n"
-    print(out_string)
 
     return out_string
 
@@ -115,16 +118,26 @@ def srun_cmd(*args):
 
     for arg in args[1:]:
         command = command + " " + arg
-
+    tmp = subprocess.run("sacct -n -S 0101 |tail -n 1", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                         encoding="utf-8")
     p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if len(tmp.stdout) > 0:
+        job_id = str(int(tmp.stdout.split(' ')[0]) + 1)
+
+        # print(tmp.stdout)
+    else:
+        # print(tmp.stderr)
+        job_id = "-1"
+
     json_data = parase_cmd_args(command)
     json_data['user'] = username
+    json_data['job_id'] = job_id
     only_once = True
     while True:
         output = p.stdout.readline().decode('utf-8')
         if output == '' and p.poll() is not None:
             if ('-h' in args) or ('--help' in args):
-                print("  -U,  --user                specify the user to submit a job")
+                print("-U,  --user                 specify the user to submit a job")
             break
 
         if output:
@@ -168,22 +181,25 @@ def salloc_cmd(*args):
     json_data = parase_cmd_args(command)
     json_data['user'] = username
 
-    try:
-        _ = requests.post(url, json=json_data)
-    except:
-        print("request the {} failed!".format(url))
-
     if len(tmp.stdout) > 0:
         out_string = tmp.stdout
-        json_data['state'] = True
+        if "Submitted batch job" in out_string:
+            json_data['state'] = True
+            json_data['job_id'] = out_string.split(' ')[-1]
+
     else:
         out_string = tmp.stderr
-        json_data['state'] = False
 
     out_string = out_string.replace('salloc', 'valloc')
     if ('-h' in args) or ('--help' in args):
         out_string = out_string + "  -U,  --user                specify the user to submit a job\n"
     print(out_string)
+
+    try:
+        _ = requests.post(url, json=json_data)
+    except:
+        print("request the {} failed!".format(url))
+
     return out_string
 
 

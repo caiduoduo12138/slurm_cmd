@@ -7,6 +7,7 @@ def parase_cmd_args(command: str):
                  "nodes": None,
                  "user": None,
                  "job_name": None,
+                 "job_id": None,
                  "cmd": command
                  }
 
