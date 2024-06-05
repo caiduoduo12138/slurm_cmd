@@ -99,7 +99,7 @@ def sbatch_cmd(*args):
     try:
         _ = requests.post(url, json=json_data)
     except:
-        print("request the {} failed!".format(url))
+        print("Warning: request the {} failed!".format(url))
 
     return out_string
 
@@ -147,7 +147,7 @@ def srun_cmd(*args):
                 try:
                     _ = requests.post(url, json=json_data)
                 except:
-                    print("request the {} failed!".format(url))
+                    print("Warning: request the {} failed!".format(url))
                 only_once = False
 
     err = p.stderr.read().decode('utf-8')
@@ -198,7 +198,7 @@ def salloc_cmd(*args):
     try:
         _ = requests.post(url, json=json_data)
     except:
-        print("request the {} failed!".format(url))
+        print("Warning: request the {} failed!".format(url))
 
     return out_string
 
