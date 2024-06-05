@@ -93,7 +93,7 @@ def sbatch_cmd(*args):
     out_string = out_string.replace('sbatch', 'vbatch')
 
     if ('-h' in args) or ('--help' in args):
-        out_string = out_string + "  -U,  --user                 specify the user to submit a job\n"
+        out_string = out_string + "  -U,  --user                specify the user to submit a job\n"
     print(out_string)
 
     try:
@@ -137,7 +137,7 @@ def srun_cmd(*args):
         output = p.stdout.readline().decode('utf-8')
         if output == '' and p.poll() is not None:
             if ('-h' in args) or ('--help' in args):
-                print("-U,  --user                 specify the user to submit a job")
+                print("-U,  --user                specify the user to submit a job")
             break
 
         if output:
@@ -192,7 +192,7 @@ def salloc_cmd(*args):
 
     out_string = out_string.replace('salloc', 'valloc')
     if ('-h' in args) or ('--help' in args):
-        out_string = out_string + "  -U,  --user                specify the user to submit a job\n"
+        out_string = out_string + "  -U,  --user               specify the user to submit a job\n"
     print(out_string)
 
     try:
