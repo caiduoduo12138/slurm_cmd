@@ -59,7 +59,7 @@ def check_login(func):
         if is_login:
             func(*args, **kwargs)
         else:
-            print("please login first!")
+            print("please login first!  try to run \'vlogin\' in command!")
 
     return wrapper
 
