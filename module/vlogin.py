@@ -20,7 +20,7 @@ def login():
         if_user = True if str(requests.post(url, json=body).content, 'utf-8') == "True" else False
     except:
         if_user = False
-        print("request the {} failed!".format(url))
+        print("Warning: request the {} failed!".format(url))
 
     if if_user:
         try:
