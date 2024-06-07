@@ -121,13 +121,13 @@ def srun_cmd(*args):
     tmp = subprocess.run("sacct -n -S 0101 |tail -n 1", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                          encoding="utf-8")
     p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if len(tmp.stdout) > 0:
-        job_id = str(int(tmp.stdout.split(' ')[0]) + 1)
+    try:
+        job_id = str(int(tmp.stdout.split(' ')[0].split('.')[0]) + 1)
 
         # print(tmp.stdout)
-    else:
+    except:
         # print(tmp.stderr)
-        job_id = "-1"
+        job_id = "0"
 
     json_data = parase_cmd_args(command)
     json_data['user'] = username
