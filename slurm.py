@@ -52,7 +52,6 @@ def scancel_cmd(*args):
 
     if len(tmp.stdout) > 0:
         out_string = tmp.stdout
-        print(out_string)
     else:
         out_string = tmp.stderr
 
